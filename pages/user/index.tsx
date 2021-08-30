@@ -1,14 +1,18 @@
 import type { NextPage } from "next";
+import { HelperLinks } from "src/common/HelperLinks";
 import styles from "../../styles/Home.module.css";
 
 type NextPageProps = { data: { name: string } };
 
 const User: NextPage<NextPageProps> = (props) => {
-  const { name } = props.data;
-
   return (
     <div className={styles.container}>
-      <main className={styles.main}>{name}</main>
+      <main className={styles.main}>
+        {JSON.stringify(props.data)}
+        <br />
+        <br />
+        <HelperLinks />
+      </main>
     </div>
   );
 };

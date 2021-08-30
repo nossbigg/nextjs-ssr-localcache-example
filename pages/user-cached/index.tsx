@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { HelperLinks } from "src/common/HelperLinks";
 import styles from "../../styles/Home.module.css";
 
 // xhrCacheHelper module, lazy loaded
@@ -18,7 +19,12 @@ const User: NextPage<NextPageProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <main className={styles.main}>{name}</main>
+      <main className={styles.main}>
+        {JSON.stringify(props.data)}
+        <br />
+        <br />
+        <HelperLinks />
+      </main>
     </div>
   );
 };
