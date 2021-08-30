@@ -9,7 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  await wait(5000);
+  await wait(2000);
   res.status(200).json({ name: "John Doe" });
 }
 
