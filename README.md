@@ -1,34 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# nextjs-ssr-localcache-example
 
-## Getting Started
+This repository demonstrates the following proofs-of-concept:
 
-First, run the development server:
+1. **Server-side XHR request caching** (via `memcached`) to speed up page renders
+1. **Server-only modules isolation** via import alias
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Details
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Upon accessing the landing page (http://localhost:3000/), there are three pages that users can access:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+   - `/user`: Makes XHR call to get user info, `getInitialProps()`, non-cached
+   - `/user-cached-ip`: Makes XHR call to get user info, `getInitialProps()`, cached
+   - `/user-cached-ssp`: Makes XHR call to get user info, `getServerSideProps()`, cached
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+1. The XHR call to get user info is deliberately delayed to last at least 2 seconds long, in order to demonstrate the effect of caching the XHR call.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+   - Since the `/user` page XHR call is not cached, the page load will always be at least 2 seconds long
+   - As `/user-cached-ip` and `/user-cached-ssp` pages both use caching, subsequent page loads (after the first page load) will be very fast.
 
-## Learn More
+1. Within the page links cluster, there is also a `Clear User Data Cache` button to clear out the cache (to invoke invalidated cache scenario)
 
-To learn more about Next.js, take a look at the following resources:
+## Prerequisites
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `node`
+- `docker`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Starting the project
 
-## Deploy on Vercel
+1. Install node dependencies: `yarn`
+1. Spin up memcached docker container: `docker-compose up`
+1. Spin up next.js instance: `yarn dev`
+1. Access landing page: http://localhost:3000/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+_Addendum_
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Connect to memcached instance: `telnet localhost 11211`
+- Verify server/client build contents: `yarn analyze`
+
+## Related resources
+
+- Next.js
+
+  - [getServerSideProps()](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering)
+  - [getInitialProps()](https://nextjs.org/docs/api-reference/data-fetching/getInitialProps)
+  - [next.config.js: Custom Webpack Config | Next.js](https://nextjs.org/docs/api-reference/next.config.js/custom-webpack-config)
+  - [SSR and Server Only Modules](https://arunoda.me/blog/ssr-and-server-only-modules)
+
+- Webpack
+  - [Resolve | webpack](https://webpack.js.org/configuration/resolve/#resolvealias)
+  - [Webpack 5 release (2020-10-10) | webpack](https://webpack.js.org/blog/2020-10-10-webpack-5-release/#deprecated-loaders)
+- Memcached
+  - [ConfiguringServer · memcached/memcached Wiki · GitHub](https://github.com/memcached/memcached/wiki/ConfiguringServer)
+  - [memcached(1) - Linux man page](https://linux.die.net/man/1/memcached)
+  - [Memcached Telnet Commands Example - JournalDev](https://www.journaldev.com/16/memcached-telnet-commands-example)
+- Memcached (Node.js Client)
+  - [memcached node.js client](https://github.com/3rd-Eden/memcached)
