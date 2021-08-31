@@ -15,8 +15,6 @@ const getMakeXhrCacheHelper = async () => {
 type NextPageProps = { data: { name: string } };
 
 const User: NextPage<NextPageProps> = (props) => {
-  const { name } = props.data;
-
   return (
     <div className={styles.container}>
       <main className={styles.main}>
