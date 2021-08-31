@@ -4,3 +4,5 @@ services:
     image: "memcached:1.6.10-alpine"
     ports:
       - "11211:11211"
+    # // sets memcached max memory (in MB)
+    command: -m 1024
